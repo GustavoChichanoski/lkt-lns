@@ -1,0 +1,25 @@
+[project]
+name = "lkt-lns"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "lkt-utils>=0.3.1",
+    "paho-mqtt>=2.1.0",
+    "pycryptodome>=3.23.0",
+    "pydantic>=2.12.4",
+    "requests>=2.32.5",
+    "rich>=14.2.0",
+]
+
+
+[tool.uv.sources]
+lkt-sniffer-wifi = { git = "ssh://git@github.com/GustavoChichanoski/wifi-sniffer-everynet.git" }
+lkt-mqtt = { git = "ssh://git@github.com/GustavoChichanoski/lkt-mqtt.git" }
+lkt-utils = { git = "ssh://git@github.com/GustavoChichanoski/lkt-utils.git" }
+
+[dependency-groups]
+dev = [
+    "rich>=14.2.0",
+]
