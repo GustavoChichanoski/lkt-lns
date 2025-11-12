@@ -1,0 +1,18 @@
+.venv
+.zed
+lkt_lns.*
+
+# Ignore Python virtual environment directories
+.venv
+
+# Ignore local MySQL/MariaDB data directories (this addresses your specific error)
+mysql_data
+*.sqlite3
+data/
+
+# General ignores
+**/.git
+**/.gitignore
+**/__pycache__
+*.pyc
+*.log

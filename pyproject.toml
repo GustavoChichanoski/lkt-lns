@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "click>=8.3.0",
     "lkt-utils>=0.3.1",
     "paho-mqtt>=2.1.0",
     "pycryptodome>=3.23.0",
@@ -15,9 +16,9 @@ dependencies = [
 
 
 [tool.uv.sources]
-lkt-sniffer-wifi = { git = "ssh://git@github.com/GustavoChichanoski/wifi-sniffer-everynet.git" }
-lkt-mqtt = { git = "ssh://git@github.com/GustavoChichanoski/lkt-mqtt.git" }
-lkt-utils = { git = "ssh://git@github.com/GustavoChichanoski/lkt-utils.git" }
+lkt-sniffer-wifi = { git = "git+ssh://git@github.com/GustavoChichanoski/wifi-sniffer-everynet.git" }
+lkt-mqtt = { git = "git+ssh://git@github.com/GustavoChichanoski/lkt-mqtt.git" }
+lkt-utils = { git = "git+ssh://git@github.com/GustavoChichanoski/lkt-utils.git" }
 
 [dependency-groups]
 dev = [

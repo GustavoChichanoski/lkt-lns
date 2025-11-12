@@ -15,7 +15,6 @@ from lkt_lns.helpers import build_pull_resp, parse_uplink
 from lkt_lns.messages import (
     EveryNetMqttMessage,
     Meta,
-    ParamsDownlinkRequest,
     ParamsDownlinkResponse,
     TypeMessages,
 )
@@ -33,9 +32,9 @@ def downlink_response2downstream(
     new_message = EveryNetMqttMessage()
     new_message.type_message = TypeMessages.DOWNLINK_RESPONSE
     new_message.meta = Meta()
-    new_message.meta.application = device.app_eui
-    new_message.meta.device = device.dev_eui
-    new_message.meta.device_addr = device.dev_addr
+    new_message.meta.application = device.app_eui or ""
+    new_message.meta.device = device.dev_eui or ""
+    new_message.meta.device_addr = device.dev_addr or ""
     new_message.meta.gateway = gateway
     new_message.meta.packet_hash = message.meta.packet_hash
     new_message.meta.packet_id = random.randbytes(16).hex()

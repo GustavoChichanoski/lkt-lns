@@ -1,6 +1,5 @@
 import base64
 import datetime
-
 import hashlib
 import json
 import logging
@@ -8,6 +7,9 @@ import random
 import socket
 import struct
 import time
+
+from lkt_utils.devices import EverynetDevice
+from lkt_utils.everynet_http import EveryNetColumn, EveryNetHTTP
 from paho.mqtt.client import Client
 
 from lkt_lns.messages import (
@@ -18,9 +20,9 @@ from lkt_lns.messages import (
     RadioModulation,
     TypeMessages,
 )
-from lkt_utils.devices import EverynetDevice
-from lkt_utils.everynet_http import EveryNetColumn, EveryNetHTTP
 
+from .helpers import generate_header
+from .lorawan import LoRaWAN
 from .packets import (
     UDP_IP,
     UPLINK_PORT,
@@ -31,8 +33,6 @@ from .packets import (
     Txpk,
     UplinkPacket,
 )
-from .helpers import generate_header
-from .lorawan import LoRaWAN
 
 
 def build_downlink(
@@ -110,9 +110,9 @@ def rxpk2everynet(
     message = EveryNetMqttMessage()
     message.type_message = TypeMessages.UPLINK
     message.meta.gateway = gateway_id
-    message.meta.application = device.app_eui
-    message.meta.device = device.dev_eui
-    message.meta.device_addr = device.dev_addr
+    message.meta.application = device.app_eui or ""
+    message.meta.device = device.dev_eui or ""
+    message.meta.device_addr = device.dev_addr or ""
     message.meta.time = datetime.datetime.now().timestamp()
     message.meta.packet_id = hashlib.sha256(
         rxpk.model_dump_json(exclude_none=True).encode()
@@ -161,7 +161,7 @@ def rxpk2everynet(
 def update_devices(everynet_http: EveryNetHTTP) -> dict[str, EverynetDevice]:
     """Fetch the current device mapping from Everynet."""
     try:
-        devices = everynet_http.get_by(None)
+        devices = everynet_http.get_by(None, None)
         logging.info(f"[green]✅ Updated device list ({len(devices)} devices)[/green]")
         return devices
     except Exception as e:
@@ -275,7 +275,7 @@ def upstream_thread(everynet_http: EveryNetHTTP, mqtt: Client, publish: str) -> 
             devices[uplink_dev_addr_hex] = new_devices[uplink_dev_addr_hex]
 
         device = devices[uplink_dev_addr_hex]
-        app_session_key_bytes = bytes.fromhex(device.appskey)
+        app_session_key_bytes = bytes.fromhex(device.appskey or "")
         decrypted_payload = LoRaWAN.decrypt(
             frm_payload_encrypted,
             app_session_key_bytes,

@@ -75,6 +75,8 @@ class TypeMessages(StrEnum):
                 return ParamsUplink
             case TypeMessages.ERROR:
                 return ParamsError
+            case _:
+                raise ValueError(f"Unknown message type: {self}")
 
 
 class ParamsDownlinkRequest(AbstractMqtt):
@@ -637,9 +639,10 @@ class ParamsDownlink(AbstractMqtt):
         :returns: ParamsDownlink object
         :rtype: ParamsDownlink
         """
-        radio_data = data.get("radio", {})
+        radio_data = try_dict(data, "radio", {})
+
         return cls(
-            radio=RadioParams.from_dict(radio_data) if radio_data else None,  # pyright: ignore[reportArgumentType]
+            radio=RadioParams.from_dict(radio_data) if radio_data else None,
             freq=try_float(data, "freq", 0.0),
             datarate=str(data.get("datarate", "") or ""),
             time=try_float(data, "time", 0.0),
