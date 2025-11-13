@@ -43,10 +43,12 @@ def main(config_path: pathlib.Path):
     mqtt: Client = Client(
         CallbackAPIVersion.VERSION2,
         f"TEST_{random.randint(100000, 999999)}",
-        protocol=MQTTProtocolVersion.MQTTv5,
+        protocol=MQTTProtocolVersion.MQTTv5 if config.mqtt.port == 8883 else MQTTProtocolVersion.MQTTv311,
     )
-    mqtt.tls_set()  # pyright: ignore[reportUnknownMemberType]
-    mqtt.username_pw_set(config.mqtt.username, config.mqtt.password)
+
+    if config.mqtt.port == 8883:
+        mqtt.tls_set()  # pyright: ignore[reportUnknownMemberType]
+        mqtt.username_pw_set(config.mqtt.username, config.mqtt.password)
 
     err = mqtt.connect(config.mqtt.host, config.mqtt.port, 60)
     if err != 0:

@@ -251,6 +251,9 @@ def upstream_thread(everynet_http: EveryNetHTTP, mqtt: Client, publish: str) -> 
 
         phy_raw = base64.b64decode(rx.data)
         uplink_dev_addr_hex = phy_raw[1:5][::-1].hex()  # little → big endian
+        if len(phy_raw) < 10:
+            logging.warning(f"[yellow]Invalid LoRaWAN packet length {len(phy_raw)}[/yellow]")
+            continue
         uplink_fcnt = int(struct.unpack("<H", phy_raw[6:8])[0])  # pyright: ignore[reportAny]
         uplink_fport = phy_raw[8]
         frm_payload_encrypted = phy_raw[9:-4]
